@@ -78,6 +78,9 @@ const MessageWrapper = styled.div`
     flex-direction: column;
     gap: 20px;
 `
+const UserCard = styled.h3`
+  color: white
+`
 type message = {
     user: {
         userName: string,
@@ -93,7 +96,8 @@ export function Home(): ReactElement {
     const [socket, setSocket] = useState();
     const [Messages, setMessages] = useState([]);
     const [NewMessage, setNewMessage] = useState('');
-    const [user, setUser] = useState({})
+    const [user, setUser] = useState("");
+    const [userList, setUserList] = useState([])
 
     function sendMessage(): void {
         if (!socket) return;
@@ -114,23 +118,31 @@ export function Home(): ReactElement {
     }
 
     useEffect(() => {
-        setSocket(io("http://127.0.0.1:3000"))
+        setSocket(io("http://127.0.0.1:3000"));
+        const urlSearch = new URLSearchParams(window.location.search);
+        setUser(urlSearch.get("username"));
     }, []);
 
     useEffect(() => {
         if (!socket) return;
-        console.log(socket)
+        socket.emit("login", user);
         socket.on("message", (message) => {
             setMessages(prevState => [...prevState, message])
         });
+        socket.on("login", (data) => {
+          setUserList(data)
+        })
     }, [socket]);
 
     return (
         <>
             <GlobalStyle />
-            <Header user={user} />
+            <Header user={user}/>
             <Main>
                 <LeftContainer>
+                {userList.map((user) => {
+                  return <UserCard>{user.userName}</UserCard>
+                })}
                 </LeftContainer>
                 <Chat>
                     <MessageWrapper>
@@ -141,7 +153,7 @@ export function Home(): ReactElement {
                     <SendForm>
                         <SendInput ref={sendMessageInput} placeholder="Write your message..." onChange={(event) => setNewMessage(event.target.value)} />
                         <SendButton onClick={sendMessage}>
-                            Send
+                            {user}
                         </SendButton>
                     </SendForm>
                 </Chat>

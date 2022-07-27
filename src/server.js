@@ -1,7 +1,6 @@
 // @ts-ignore
-import express, {json, response} from "express";
+import express, { json, response } from "express";
 import http from "http";
-import cors from 'cors';
 import { Server } from "socket.io";
 
 const app = express();
@@ -13,16 +12,25 @@ const io = new Server(server, {
     }
 });
 
-let users = [];
+var users = [];
 
 io.on("connection", (socket) => {
-    socket.on("login", (data) => {
-        users.push(data)
-        console.log(users)
-        socket.name = data.username
-        socket.emit("login", data)       
-    });
+    socket.on("login", (userName) => {
 
+        const user = users.find((user) => user.userName === userName)
+
+        if(user){
+            user.socket_id = socket.id
+        }else{
+            const newUser = {
+                userName: userName,
+                socket_id: socket.id
+            }
+            users.push(newUser)
+            console.log(users)
+        }
+        socket.emit("login", users)
+    })
     socket.join("message");
     socket.on("message", (data) => {
         socket.to("message").emit("message", data)

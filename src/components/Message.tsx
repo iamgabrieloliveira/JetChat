@@ -27,25 +27,21 @@ const MessageHeader = styled.p`
 `
 
 type messageProps = {
-    sendUser: {
-        userName: string
-    },
-    currentUser: {
-        userName: string
-    },
+    currentUser: string,
+    sendUser: string;
     content: string,
     time: string,
 }
 
 export function Message(props:messageProps): ReactElement {
 
-   let position =  props.currentUser.userName === props.sendUser.userName ? "end" : "start";
+   let position =  props.currentUser === props.sendUser ? "end" : "start";
 
     return(
         <MessageWrapper style={{justifyContent: position}}>
             <Container>
                 <MessageHeader>
-                    {props.sendUser.userName}
+                    {props.sendUser}
                 </MessageHeader>
                 <MessageContent>
                     {props.content}

@@ -47,17 +47,17 @@ const SearchInput = styled.input`
     border: 0;
   }
 `
-type headerProps = {
-  user: {
-    userName: string
-  }
-}
+// type headerProps = {
+//   user: {
+//     userName: string
+//   }
+// }
 
-export function Header(props: headerProps): ReactElement {
+export function Header(props): ReactElement {
   return (
     <Container>
       <Title>Jet Chat</Title>
-      <Title>Hello, {props.user.userName}</Title>
+      <Title>Hello, {props.user}</Title>
       <SearchInput placeholder="Search" />
       <Button>Create room</Button>
     </Container>
