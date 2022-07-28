@@ -85,32 +85,56 @@ const Label = styled.label`
     margin-bottom: 10px;
     margin-left: 4px;
 `
+const Error = styled.h2`
+    background: #ff3333;
+    padding: 10px 20px;
+    border-radius: 5px;
+    width: 69%;
+    text-align: center;
+    font-weight: normal;
+    color: white;
+    font-size: 17px;
+`
 
 export default function Login() {
 
     const [socket, setSocket] = useState();
     const [rooms, setRooms] = useState();
     const [createRoomInput, setCreateRoomInput] = useState(false);
-    const [newRoom, setNewRoom] = useState("");
+    const [newRoom, setNewRoom] = useState();
+    const [userName, setUserName] = useState();
+    const [users, setUsers] = useState();
+    const [validator, setValidator] = useState("");
 
     const createRoomInputChange = () => setCreateRoomInput(current => !current);
 
-    const createRoom = () => {if(socket) socket.emit("room", newRoom)};
+    const createRoom = () => {if(socket) socket.emit("rooms", newRoom)};
+
+    const formSubmit = (event) => {
+        for(let user of users) {
+            if(userName === user.userName) {
+                event.preventDefault();
+                setValidator("Username already using...")
+            }
+        }
+    }
 
     useEffect(() => setSocket(io("http://127.0.0.1:3000")), [])
 
     useEffect(() => {
         if (!socket) return;
-         socket.on("rooms", rooms => setRooms(rooms))
+        socket.on("rooms", rooms => setRooms(rooms));
+
+        socket.on("users", data => setUsers(data));
     }, [socket])
 
     return (
         <Container>
-            <FormContainer action="http://localhost:5173/home">
+            <FormContainer action="http://localhost:5173/home" onSubmit={formSubmit}>
                 <GlobalStyle />
                 <h1>JetChat</h1>
                 <FormGroup>
-                    <Input type="text" name="username" id="username" placeholder='Username' />
+                    <Input onChange={(event) => setUserName(event.target.value)} type="text" name="username" id="username" placeholder='Username' />
                 </FormGroup>
                 <FormGroup>
                     <Label htmlFor="room">Create room or,  <CreateRoomInput onClick={createRoomInputChange}>choose</CreateRoomInput></Label>
@@ -127,6 +151,7 @@ export default function Login() {
                     }
                 </FormGroup>
                 <Button type='submit' onClick={createRoom}>Login</Button>
+                {validator ? <Error>{validator}</Error> : null}
             </FormContainer>
         </Container>
 

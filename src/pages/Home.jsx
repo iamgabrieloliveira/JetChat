@@ -1,4 +1,4 @@
-import React, { HtmlHTMLAttributes, ReactElement, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useState, useRef } from "react";
 import styled, { createGlobalStyle } from 'styled-components';
 import { Header } from "../components/Header";
@@ -131,17 +131,17 @@ export function Home() {
     setSocket(io("http://127.0.0.1:3000"));
     const urlSearch = new URLSearchParams(window.location.search);
     setUser(urlSearch.get("username"));
-    setRoom(urlSearch.get("room"))
+    setRoom(urlSearch.get("room"));
   }, []);
 
   useEffect(() => {
     if (!socket) return;
-
+    console.log("Dentro do useEffect")
     socket.on("select_room", (data) => setUserList(data));
 
     socket.on("newuserlist", (data) => setUserList(data));
 
-    socket.on("rooms", (data) => setRooms(data))  
+    socket.on("rooms", (data) => setRooms(data));
 
     socket.emit("select_room", {
       user,

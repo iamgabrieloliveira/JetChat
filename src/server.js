@@ -17,7 +17,13 @@ var rooms = ["Geral", "Fun", "Work"];
 
 io.on("connection", (socket) => {
     socket.emit("rooms", rooms);
-    
+    socket.emit("users", users);
+
+    socket.on("users", (users) => {
+        console.log(users)
+        socket.emit(users)
+    })
+        
     socket.on("rooms", (room) => {
         rooms.push(room)
         socket.emit("rooms", rooms) 
@@ -65,6 +71,9 @@ function getRoomData(room) {
         users: usersRoom
     }
 }
+setInterval(() => {
+    console.log(rooms)
+}, 1000)
 server.listen(3000, () => {
     console.log("Server running on port: 3000")
 });
