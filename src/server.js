@@ -1,6 +1,8 @@
 import express from "express";
 import http from "http";
-import {Server} from "socket.io";
+import {
+    Server
+} from "socket.io";
 
 const app = express();
 const server = http.createServer(app);
@@ -20,16 +22,17 @@ io.on("connection", (socket) => {
     socket.emit("users", users);
 
     socket.on("users", (users) => {
-        console.log(users)
         socket.emit(users)
     })
-        
+
     socket.on("rooms", (room) => {
-        rooms.push(room)
-        socket.emit("rooms", rooms) 
+        if (room) {
+            rooms.push(room)
+        }
+        socket.broadcast.emit("rooms", rooms)
     });
 
-    socket.on("select_room", (data, callback) => {        
+    socket.on("select_room", (data, callback) => {
         socket.join(data.room);
 
         const user = users.find(user => user.userName === data.user && user.room === data.room)
@@ -52,7 +55,6 @@ io.on("connection", (socket) => {
 
         socket.on("disconnect", () => {
             users = users.filter(user => user.socket_id != socket.id)
-            console.log(users)
             socket.to(data.room).emit("newuserlist", users);
         })
 
@@ -71,9 +73,7 @@ function getRoomData(room) {
         users: usersRoom
     }
 }
-setInterval(() => {
-    console.log(rooms)
-}, 1000)
+
 server.listen(3000, () => {
     console.log("Server running on port: 3000")
 });

@@ -19,15 +19,14 @@ const Main = styled.div`
 
 const LeftContainer = styled.div`
   left: 0;
-  width: 20%;
-  height: calc(100vh - 130px);
+  width: 18%;
   background: #2f2d2d;
-
+  padding-left: 15px;
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 12px;
-  padding: 25px 0;
+  padding-bottom: 24px;
+  padding-top: 24px;
 `
 const SendForm = styled.div`
   position: fixed;
@@ -40,7 +39,7 @@ const SendInput = styled.input`
 
   margin-left: 800px;
   width: 400px;
-  height: 50px;
+  height: 40px;
   background: white;
   border: none;
   border-radius: 10px 0px 0px 10px;
@@ -54,7 +53,7 @@ const SendInput = styled.input`
 `
 const SendButton = styled.button`
   width: 80px;
-  height: 51px;
+  height: 40px;
   background: blue;
   border: none;
   color: white;
@@ -70,8 +69,10 @@ const SendButton = styled.button`
 
 const Chat = styled.div`
   background: #212020;
-  width: 80%;
+  width: 82%;
   padding: 60px;
+  height: 780px;
+  overflow: auto;
 `
 const MessageWrapper = styled.div`
     display: flex;
@@ -105,11 +106,17 @@ export function Home() {
   const [room, setRoom] = useState();
   const [rooms, setRooms] = useState();
 
-  function sendMessage() {
-    if (!socket) return;
+  const scrollToBottom = (id) => {
+    setTimeout(() => {
+      const element = document.querySelector(id);
+      element.scrollTop = element.scrollHeight;
+    }, 1);
+  }
+
+  const sendMessage = () => {
+    if (!socket | !NewMessage) return;
     let today = new Date();
     let minutes = today.getMinutes().toString().length === 1 ? "0" + today.getMinutes().toString() : today.getMinutes().toString()
-
     let time = today.getHours() + ":" + minutes
 
     const message = {
@@ -122,8 +129,15 @@ export function Home() {
     socket.emit("message", message);
     setMessages(prevState => [...prevState, message])
 
-    if (!sendMessageInput) {
-      sendMessageInput.current.value = "";
+    sendMessageInput.current.value = "";
+    setNewMessage("");
+    scrollToBottom("#chat");
+
+  }
+
+  window.onkeydown = (event) => {
+    if (event.key === "Enter") {
+      sendMessage();
     }
   }
 
@@ -132,11 +146,11 @@ export function Home() {
     const urlSearch = new URLSearchParams(window.location.search);
     setUser(urlSearch.get("username"));
     setRoom(urlSearch.get("room"));
+
   }, []);
 
   useEffect(() => {
     if (!socket) return;
-    console.log("Dentro do useEffect")
     socket.on("select_room", (data) => setUserList(data));
 
     socket.on("newuserlist", (data) => setUserList(data));
@@ -149,6 +163,7 @@ export function Home() {
     }, (response) => {
       setUserList(response.users)
       setMessages(response.messages)
+      scrollToBottom("#chat")
     });
 
     socket.on("message", (message) => setMessages(prevState => [...prevState, message]));
@@ -157,13 +172,13 @@ export function Home() {
   return (
     <>
       <GlobalStyle />
-      <Header user={user} room={room} rooms={rooms}/>
+      <Header user={user} room={room} rooms={rooms} />
       <Main>
         <LeftContainer>
           <UserCardTitle>Online in this room</UserCardTitle>
           {userList.map((user, i) => <UserCard key={i}><OnlineIcon></OnlineIcon> {user.userName}</UserCard>)}
         </LeftContainer>
-        <Chat>
+        <Chat id='chat'>
           <MessageWrapper>
             {Messages.map((message, i) => <Message content={message.content} key={i} sendUser={message.user} currentUser={user} time={message.time} />)}
           </MessageWrapper>

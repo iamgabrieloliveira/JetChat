@@ -108,11 +108,25 @@ export default function Login() {
 
     const createRoomInputChange = () => setCreateRoomInput(current => !current);
 
-    const createRoom = () => {if(socket) socket.emit("rooms", newRoom)};
+    const createRoom = (event) => {
+        if (socket) {
+            let roomAlreadyExist = false;
+            for (let room of rooms) {
+                if (room === newRoom) {
+                    event.preventDefault();
+                    setValidator("Room already using...")
+                    roomAlreadyExist = true;
+                }
+            }
+            if (!roomAlreadyExist) {
+                socket.emit("rooms", newRoom);
+            }
+        }
+    };
 
     const formSubmit = (event) => {
-        for(let user of users) {
-            if(userName === user.userName) {
+        for (let user of users) {
+            if (userName === user.userName) {
                 event.preventDefault();
                 setValidator("Username already using...")
             }

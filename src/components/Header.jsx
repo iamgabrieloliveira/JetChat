@@ -81,7 +81,10 @@ const ChangeRoomButton  = styled.button`
 
 export function Header(props) {
 
-  let roomsList = props.rooms ? props.rooms : []
+  let roomsList = props.rooms ? props.rooms : [];
+
+  let selectedInput = document.querySelector(`option[value="${props.room}"]`);
+  if(selectedInput) selectedInput.setAttribute("selected", "selected");
 
   return (
     <Container>
@@ -90,9 +93,9 @@ export function Header(props) {
       <Title>You are in the: {props.room} room</Title>
       <ChangeRoomForm action="http://localhost:5173/home">
         <ChangeRoomSelect name="room" id="room">
-          { roomsList.map((room, i) => <option  value={room}>{room}</option>) }
+          { roomsList.map(room => <option value={room}>{room}</option>) }
         </ChangeRoomSelect>
-        <input type="text" style={{display: "none"}} name="username" id="user" value={props.user}/>
+        <input type="text" style={{display: "none"}} name="username"   id="user" value={props.user}/>
         <ChangeRoomButton type='submit'>Change</ChangeRoomButton>
       </ChangeRoomForm>
       {/* <SearchInput placeholder="Search" /> */}
