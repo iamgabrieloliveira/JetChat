@@ -1,126 +1,22 @@
 import React, { useEffect } from 'react';
 import { useState, useRef } from "react";
-import styled, { createGlobalStyle } from 'styled-components';
 import { Header } from "../components/Header";
 import { Message } from "../components/Message";
 import { io } from 'socket.io-client';
-import { keyframes } from 'styled-components';
+import { 
+  GlobalStyle,
+  Main,
+  LeftContainer,
+  Chat,
+  MessageWrapper, 
+  SendForm,
+  UserCardTitle, 
+  OnlineIcon, 
+  UserCard,
+  SendInput, 
+  SendButton 
+} from '../style/home-style';
 
-const GlobalStyle = createGlobalStyle`
-  * {
-    margin: 0;
-    padding: 0;
-    font-family: 'Roboto', sans-serif;
-  }
-`;
-
-const Main = styled.div`
-    display: flex;
-`
-
-const ButtonFLoat = keyframes`
-  0%, 100%{
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(10px);
-  }
-`
-
-const LeftContainer = styled.div`
-  left: 0;
-  width: 18%;
-  min-width: 350px;
-  background: #2f2d2d;
-  padding-left: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding-bottom: 24px;
-  padding-top: 24px;
-  
-  @media(max-width: 1000px) {
-    display: none
-  }
-`
-const SendForm = styled.div`
-  position: fixed;
-  bottom: 15px;
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-  animation: ${ButtonFLoat} 5s linear infinite;
-`
-const SendInput = styled.input`
-  background: gray;
-
-  width: 400px;
-  height: 40px;
-  background: white;
-  border: none;
-  border-radius: 10px 0px 0px 10px;
-  color: black;
-  font-size: 20px;
-  padding-left: 8px;
-  &:focus{
-    outline: 0;
-    border: 0;
-  }
-`
-const SendButton = styled.button`
-  width: 80px;
-  height: 40px;
-  background: #6868eb;
-  border: none;
-  color: white;
-  font-weight: bold;
-  font-size: 19px;
-  border-radius: 0px 10px 10px 0px;
-  cursor: pointer;
-  margin-right: 600px;
-  &:focus{
-    outline: 0;
-    border: 0;
-  }
-`
-
-const Chat = styled.div`
-  background: #212020;
-  width: 82%;
-  padding: 60px;
-  height: 780px;
-  overflow: auto;
-  background-image: url(https://i.kym-cdn.com/entries/icons/facebook/000/040/642/terrifiednootnoot.jpg);
-  background-repeat: no-repeat;
-  object-fit: cover;
-  /* background-size: 100%; */
-  background-position: center;
-  @media(max-width: 1000px) {
-    width: 100%;
-  }
-`
-
-const MessageWrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-`
-const UserCardTitle = styled.h1`
-  color: white;
-`
-const UserCard = styled.h3`
-  color: white;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-`
-const OnlineIcon = styled.div`
-    width: 9px;
-    height: 9px;
-    background: green;
-    border-radius: 50%;
-`
 
 export function Home() {
   let sendMessageInput = useRef();
@@ -143,15 +39,10 @@ export function Home() {
   const sendMessage = () => {
     if (!socket | !NewMessage) return;
     let today = new Date();
-    let minutes = today.getMinutes().toString().length === 1 ? "0" + today.getMinutes().toString() : today.getMinutes().toString()
-    let time = today.getHours() + ":" + minutes
+    let minutes = today.getMinutes().toString().length === 1 ? "0" + today.getMinutes().toString() : today.getMinutes().toString();
+    let time = today.getHours() + ":" + minutes;
 
-    const message = {
-      content: NewMessage,
-      user,
-      time,
-      room,
-    }
+    const message = { content: NewMessage, user, time, room }
 
     socket.emit("message", message);
     setMessages(prevState => [...prevState, message])
@@ -159,7 +50,6 @@ export function Home() {
     sendMessageInput.current.value = "";
     setNewMessage("");
     scrollToBottom("#chat");
-
   }
 
   window.onkeydown = (event) => {
@@ -183,13 +73,10 @@ export function Home() {
 
     socket.on("rooms", data => setRooms(data));
 
-    socket.emit("select_room", {
-      user,
-      room
-    }, (response) => {
-      setUserList(response.users)
-      setMessages(response.messages)
-      scrollToBottom("#chat")
+    socket.emit("select_room", { user, room }, (response) => {
+      setUserList(response.users);
+      setMessages(response.messages);
+      scrollToBottom("#chat");
     });
 
     socket.on("message", (message) => setMessages(prevState => [...prevState, message]));
@@ -210,9 +97,7 @@ export function Home() {
           </MessageWrapper>
           <SendForm>
             <SendInput ref={sendMessageInput} placeholder="Write your message..." onChange={(event) => setNewMessage(event.target.value)} />
-            <SendButton onClick={sendMessage}>
-              Send
-            </SendButton>
+            <SendButton onClick={sendMessage}>Send</SendButton>
           </SendForm>
         </Chat>
       </Main>

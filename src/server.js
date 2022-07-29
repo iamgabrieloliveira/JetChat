@@ -67,14 +67,11 @@ io.on("connection", (socket) => {
     })
 });
 
-function getRoomData(room) {
+const getRoomData = (room) => {
     const messagesRoom = messages.filter(message => message.room === room);
     const usersRoom = users.filter(user => user.room === room);
-    
-    return {
-        messages: messagesRoom,
-        users: usersRoom
-    }
+
+    return { messages: messagesRoom, users: usersRoom }
 }
 
 server.listen(3000, () => {
