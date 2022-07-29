@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -10,21 +10,6 @@ const Container = styled.div`
   justify-content: space-around;
   border-bottom: 1px solid #230505;
   align-items: center;
-`
-const Button = styled.button`
-    background: white;
-    width: 100px;
-    height: 40px;
-    border: none;
-    border-radius: 5px;
-    color: black;
-    cursor: pointer;
-    transition: .6s;
-    &:hover {
-    background: black;
-    color: white;
-      transform: translateY(5px);
-    }  
 `
 const Title = styled.h1`
     color: white;
@@ -49,12 +34,12 @@ const SearchInput = styled.input`
     border: 0;
   }
 `
-const ChangeRoomForm = styled.form`
 
+const ChangeRoomForm = styled.form`
 `
 
 const ChangeRoomSelect = styled.select`
-  padding: 5px 12px;
+  padding: 8px 12px;
   border-radius: 10px 0px 0px 10px;
   background: white;
   border: 0;
@@ -67,7 +52,7 @@ const ChangeRoomSelect = styled.select`
 const ChangeRoomButton  = styled.button`
   padding: 5px 12px;
   border-radius: 0px 10px 10px 0px;
-  background: #ff3636;
+  background: #6868eb;
   border: 0;
   height: 34px;
   color: white;
@@ -98,7 +83,6 @@ export function Header(props) {
         <input type="text" style={{display: "none"}} name="username"   id="user" value={props.user}/>
         <ChangeRoomButton type='submit'>Change</ChangeRoomButton>
       </ChangeRoomForm>
-      {/* <SearchInput placeholder="Search" /> */}
     </Container>
   )
 }

@@ -1,4 +1,4 @@
-import react, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { io } from 'socket.io-client';
 
@@ -148,7 +148,7 @@ export default function Login() {
                 <GlobalStyle />
                 <h1>JetChat</h1>
                 <FormGroup>
-                    <Input onChange={(event) => setUserName(event.target.value)} type="text" name="username" id="username" placeholder='Username' />
+                    <Input onChange={(event) => setUserName(event.target.value)} required type="text" name="username" id="username" placeholder='Username' />
                 </FormGroup>
                 <FormGroup>
                     <Label htmlFor="room">Create room or,  <CreateRoomInput onClick={createRoomInputChange}>choose</CreateRoomInput></Label>

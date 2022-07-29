@@ -1,8 +1,6 @@
 import express from "express";
 import http from "http";
-import {
-    Server
-} from "socket.io";
+import { Server } from "socket.io";
 
 const app = express();
 const server = http.createServer(app);
@@ -35,6 +33,8 @@ io.on("connection", (socket) => {
     socket.on("select_room", (data, callback) => {
         socket.join(data.room);
 
+        socket.to(data.room).emit(data.user);
+
         const user = users.find(user => user.userName === data.user && user.room === data.room)
 
         if (user) {
@@ -48,7 +48,9 @@ io.on("connection", (socket) => {
         }
 
         const roomUsers = users.filter(user => user.room === data.room)
-        socket.to(data.room).emit("select_room", roomUsers);
+        socket.to(data.room).emit("select_room", {
+            roomUsers,
+        });
 
         const roomData = getRoomData(data.room);
         callback(roomData);
@@ -68,6 +70,7 @@ io.on("connection", (socket) => {
 function getRoomData(room) {
     const messagesRoom = messages.filter(message => message.room === room);
     const usersRoom = users.filter(user => user.room === room);
+    
     return {
         messages: messagesRoom,
         users: usersRoom

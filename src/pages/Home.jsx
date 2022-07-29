@@ -4,6 +4,7 @@ import styled, { createGlobalStyle } from 'styled-components';
 import { Header } from "../components/Header";
 import { Message } from "../components/Message";
 import { io } from 'socket.io-client';
+import { keyframes } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -17,9 +18,19 @@ const Main = styled.div`
     display: flex;
 `
 
+const ButtonFLoat = keyframes`
+  0%, 100%{
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+`
+
 const LeftContainer = styled.div`
   left: 0;
   width: 18%;
+  min-width: 350px;
   background: #2f2d2d;
   padding-left: 15px;
   display: flex;
@@ -27,17 +38,23 @@ const LeftContainer = styled.div`
   gap: 12px;
   padding-bottom: 24px;
   padding-top: 24px;
+  
+  @media(max-width: 1000px) {
+    display: none
+  }
 `
 const SendForm = styled.div`
   position: fixed;
-  bottom: 9px;
+  bottom: 15px;
   display: flex;
+  width: 100%;
+  justify-content: center;
   align-items: center;
+  animation: ${ButtonFLoat} 5s linear infinite;
 `
 const SendInput = styled.input`
   background: gray;
 
-  margin-left: 800px;
   width: 400px;
   height: 40px;
   background: white;
@@ -54,13 +71,14 @@ const SendInput = styled.input`
 const SendButton = styled.button`
   width: 80px;
   height: 40px;
-  background: blue;
+  background: #6868eb;
   border: none;
   color: white;
   font-weight: bold;
   font-size: 19px;
   border-radius: 0px 10px 10px 0px;
   cursor: pointer;
+  margin-right: 600px;
   &:focus{
     outline: 0;
     border: 0;
@@ -73,7 +91,16 @@ const Chat = styled.div`
   padding: 60px;
   height: 780px;
   overflow: auto;
+  background-image: url(https://i.kym-cdn.com/entries/icons/facebook/000/040/642/terrifiednootnoot.jpg);
+  background-repeat: no-repeat;
+  object-fit: cover;
+  /* background-size: 100%; */
+  background-position: center;
+  @media(max-width: 1000px) {
+    width: 100%;
+  }
 `
+
 const MessageWrapper = styled.div`
     display: flex;
     flex-direction: column;
@@ -146,16 +173,15 @@ export function Home() {
     const urlSearch = new URLSearchParams(window.location.search);
     setUser(urlSearch.get("username"));
     setRoom(urlSearch.get("room"));
-
   }, []);
 
   useEffect(() => {
     if (!socket) return;
-    socket.on("select_room", (data) => setUserList(data));
+    socket.on("select_room", data => setUserList(data.roomUsers));
 
-    socket.on("newuserlist", (data) => setUserList(data));
+    socket.on("newuserlist", data => setUserList(data));
 
-    socket.on("rooms", (data) => setRooms(data));
+    socket.on("rooms", data => setRooms(data));
 
     socket.emit("select_room", {
       user,

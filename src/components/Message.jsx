@@ -1,11 +1,21 @@
 import React from 'react';
 
-import styled from "styled-components";
+import styled,  { keyframes } from "styled-components";
 
 const MessageWrapper = styled.div`
   width: 100%;
   display: flex;
 `
+
+const ButtonFLoat = keyframes`
+  0%, 100%{
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+`
+
 const Container = styled.div`
     min-width: 300px;
     max-width: 300px;
@@ -15,6 +25,8 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    animation: ${ButtonFLoat} 5s linear infinite;
+
 `
 const MessageContent = styled.p`
   color: black;
