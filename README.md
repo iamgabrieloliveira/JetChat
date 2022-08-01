@@ -1,3 +1,3 @@
-# vitejs-vite-bel4hr
+# JetChat
 
-[Edit on StackBlitz ⚡️](https://stackblitz.com/edit/vitejs-vite-bel4hr)
+to run #npm install and #npm run dev
